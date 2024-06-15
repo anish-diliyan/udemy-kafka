@@ -48,5 +48,38 @@ The ksqlDB webserver turns SQL commands into Kafka Streams applications behind t
 
 ![App Screenshot](resources/ksqlDB.png)
 
-### What is a Kafka Topic?
+### What is a Kafka Topic?                                                                 
+Kafka uses topics to organize messages, similar to how databases use tables.
+Each topic is identified by its name, such as logs for log messages and purchases for purchase data.
+Kafka topics cannot be queried like database tables.
+We use Kafka producers to send data to the topic and Kafka consumers to read the data from the topic in 
+order.
+Kafka topics can contain messages in any format.
+The sequence of these messages is called a data stream.
 
+![App Screenshot](resources/topics.png)
+
+By default, data in Kafka topics is deleted after one week, and this timeframe is adjustable to 
+prevent disk space shortage.
+
+### What are Kafka Partitions?                                                                          
+Topics are divided into partitions, with a single topic potentially having more than one hundred partition.
+The number of partitions for a topic is set when the topic is created and they are numbered from 0 to N-1,
+where N represents the total number of partitions.
+The diagram below illustrates a topic with three partitions, each receiving appended messages.
+The offset is a unique integer value assigned to each message as it is written into a partition.
+This offset serves as an identifier for every message within a particular partition.
+
+![App Screenshot](resources/partition.png)
+
+> Kafka topics are immutable: once data is written to a partition, it cannot be changed.
+
+### What are Kafka Offsets?                                                                              
+- The Apache Kafka offsets indicate the message position within a Kafka Partition.
+- Each partition starts counting offsets from 0 and increases with every message.
+- This means that each Kafka offset is only meaningful within a specific partition.
+
+> #### If a topic has multiple partitions, Kafka guarantees message order within a partition, but not across partitions.
+
+- Once messages are deleted in Kafka topics, the offsets continue to increment endlessly, ensuring unique identification
+for each message within its partition.
