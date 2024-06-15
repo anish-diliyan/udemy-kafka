@@ -7,7 +7,7 @@ can be transferred to other systems, like databases.
 
 ![App Screenshot](resources/Producer_Topic_Consumer.png)
 
-**What is Kafka Streams?**                                                                    
+### What is Kafka Streams?                                                                    
 After we bring data into Kafka from other systems, we can use stream processing applications 
 to analyze it in real time.
 These applications rely on data stores like Apache Kafka.
@@ -19,7 +19,7 @@ We can use the Kafka Streams library that comes with Apache Kafka for stream pro
 Other options are Apache Spark and Apache Flink.
 ![App Screenshot](resources/Stream_Processing.png)
 
-**What is Kafka Connect?**                                                                  
+### What is Kafka Connect?                                                                  
 To bring data into Apache Kafka, we use Kafka producers, over the time thinking was 
 developed as Creating standardized open-source code for common data sources can be helpful.
 Kafka Connect is a tool that connects popular systems with Kafka,
@@ -33,7 +33,7 @@ existing components.
 
 ![App Screenshot](resources/Sink_Connector.png)
 
-**What is the Schema Registry?**                                                           
+### What is the Schema Registry?                                                           
 The Schema Registry in Apache Kafka manages different types of data formats like 
 Apache Avro, Protobuf, and JSON-schema.
 It makes sure that the things sending the data and the things receiving it can work 
@@ -41,7 +41,7 @@ together.
 Without a schema registry, things that send and receive data are at risk of not working 
 if the data format changes.
 
-**What is ksqlDB?**                                                                       
+### What is ksqlDB?                                                                       
 ksqlDB is a database that processes streams and uses a language like SQL to work with Kafka 
 topics.
 The ksqlDB webserver turns SQL commands into Kafka Streams applications behind the scenes.
