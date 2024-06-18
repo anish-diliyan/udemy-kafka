@@ -181,5 +181,114 @@ group, but a consumer from a consumer group can be assigned multiple partitions.
 Usually, we have as many consumers in a consumer group as the number of partitions.
 
 ### Consumer Offsets
+Kafka brokers use an internal topic named ```__consumer_offsets``` that keeps track of what messages 
+a given consumer group last successfully processed, for that consumer will regularly commit the latest 
+processed message, also known as consumer offset.
+
+![App Screenshot](resources/consumer_offset.png)
+
+Most client libraries automatically commit offsets to Kafka for you periodically,
+and the responsible Kafka broker will ensure writing to the ```__consumer_offsets``` topic therefore, 
+consumers do not write to that topic directly.</br>
+
+The process of committing offsets is not done for every message consumed (because this would be inefficient),
+and instead is a periodic process.</br>
+
+This also means that when a specific offset is committed,
+all previous messages that have a lower offset are also considered to be committed.
+
+<h2 align="center"> Brokers </h2>
+A single Kafka server is called a Kafka Broker.
+we learned that a topic may have more than one partition.
+Each partition may live on different servers, also known as Kafka brokers.
+
+### Cluster
+An ensemble of Kafka brokers working together is called a Kafka cluster.
+Some clusters may contain just one broker or others may contain three or potentially 100 brokers. 
+Companies like Netflix and Uber run hundreds or thousands of Kafka brokers to handle their data.</br>
+A broker in a cluster is identified by a unique numeric ID.
+
+![App Screenshot](resources/cluster.png)
+
+### Bootstrap Server
+
+A client that wants to send or receive messages from the Kafka cluster may connect to any broker in the 
+cluster. Every broker in the cluster has metadata about all the other brokers and will help the client 
+connect to them as well, and therefore ***any broker in the cluster is also called a bootstrap server.***
+
+![App Screenshot](resources/bootstrap_server.png)
+
+<h2 align="center"> Topic Replication </h2>
+Replication means that data is written down not just to one broker, but many.
+
+> Data Replication helps prevent data loss by writing the same data to more than one broker.
+
+![App Screenshot](resources/replication_factor.png)
+
+if a topic is stored on two brokers, that means we have given a replication factor of 2.
+
+> ***The replication factor is a topic setting and is specified at topic creation time.***
+
+![App Screenshot](resources/broker_fails.png)
+
+### ***What are Partition Leaders and Replicas?***
+For a given topic-partition, the cluster designates one Kafka broker to be responsible for sending and 
+receiving data to clients. That broker is known as the ***leader broker*** of that topic partition. 
+Any other broker storing replicated data for that partition is referred to as a replica.</br>
+If the leader broker were to fail, one of the replicas will be elected as the new partition leader by an election.
+
+> ***Therefore, each partition has one leader and multiple replicas.***
+
+![App Screenshot](resources/leader_partition.png)
+
+### ***What are In-Sync Replicas (ISR)?***
+An ISR is a replica that is up to date with the leader broker for a partition.
+Any replica not up to date with the leader is **out of sync**.
+
+### ***producers acks setting***
+Kafka producers only write data to the current leader broker for a partition.
+```acks``` used to specify the message must be written to a minimum number of replicas before being 
+considered a successful write of message. 
+> if using Kafka < v3.0, ```acks=1```
+> if using Kafka >= v3.0, ```acks=all```
+
+```acks = 0``` : does not acknowledge for any successful writing of a message.
+![App Screenshot](resources/acks_0.png)
+
+```acks = 1``` : acknowledge required from leader partition for successful writing of a message.
+![App Screenshot](resources/acks_1.png)
+
+```acks = all``` : acknowledge required from leader partition and all ISR partition for successful 
+writing of a message.
+![App Screenshot](resources/acks_all.png)
+
+We can control the value of ```all``` by using another property of broker ```min.insync.replicas``` 
+(this can also be applied at topic level).
+The value of this property ensures that minimum partition must be written to the amount of value in sync,
+others can be out of sync.
+somehow message is not written to the ```min.insync.replicas``` int that case producer will get 
+```NotEnoughReplicasException```
+
+![App Screenshot](resources/min_in_sync_replica.png)
+
+### Consumers Replicas Fetching
+Kafka consumers read by default from the partition leader.
+
+![App Screenshot](resources/consumer_leader.png)
+
+But since Apache Kafka 2.4, it's been possible to configure consumers to read 
+from in-sync replicas instead (usually the closest).</br>
+
+![App Screenshot](resources/consumer_read_isr.png)
+
+
+
+
+
+
+
+
+
+
 
 
