@@ -1,2 +1,3 @@
 rootProject.name = 'udemy-kafka'
-include 'wikimedia-producer'
+include 'part2-wikimedia-producer'
+include 'part1-basic'

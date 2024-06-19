@@ -32,10 +32,12 @@ public class ProducerDemo {
           "demo_java", "Hello kafka, I am Java producer"
         );
 
-        // send data (topic demo_java should exists)
+        // send data (topic demo_java should exists,
+        // so first create the topic either using conductor ui or cli)
         producer.send(producerRecord);
 
-        // flush: tell the producer to send all the data and block until done
+        // flush: tell the producer to send all the data and block until done.
+        // it ensure that all the data that was in .send() to be produced
         // -- synchronized operation
         producer.flush();
 

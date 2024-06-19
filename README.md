@@ -281,6 +281,44 @@ from in-sync replicas instead (usually the closest).</br>
 
 ![App Screenshot](resources/consumer_read_isr.png)
 
+<h2 align="center"> Zookeeper </h2>
+
+Zookeeper is used to track cluster state, broker membership and leadership.
+
+> - Kafka 0.x, 1.x & 2.x must use Zookeeper
+> - Kafka 3.x can work without Zookeeper (KIP-500) but is not production ready yet 
+> - Kafka 4.x will not have Zookeeper
+
+- Zookeeper keeps track of which brokers are part of the Kafka cluster
+- Zookeeper is used by Kafka brokers to determine which broker is the leader of a given partition and 
+topic and perform leader elections
+- Zookeeper stores configurations for topics and permissions
+- Zookeeper sends notifications to Kafka in case of changes 
+(e.g., new topic, broker dies, broker comes up, delete topics, etc.…)
+- Zookeeper has a leader to handle writes, the rest of the servers are followers to handle reads.
+- Servers inside zookeeper cluster are called ***quorum***
+
+![App Screenshot](resources/zookeeper.png)
+
+<h2 align="center"> KRaft Mode </h2>
+The Kafka project undertook one of its greatest changes with the introduction of KIP-500 on August 
+1st 2019: the desire to ***remove Zookeeper*** as a dependency to running Apache Kafka.
+
+![App Screenshot](resources/kraft_mode.png)
+
+<h2 align="center"> Log Compaction </h2>
+
+```log.cleanup.policy``` will decide for how much amount of time kafka will clean up the message. 
+There are two cleanup policies: </br>
+- ```log.cleanup.policy=delete``` : This is ***default*** for all user topics. With this policy configured for a topic, Kafka deletes events older than the configured retention time. 
+The default retention period is a week.
+- ```log.cleanup.policy=compact``` : This is default for Kafka's ```__consumer_offsets``` topic. With this
+policy on a topic, Kafka only stores the **most recent** value for each key in the topic. Setting the 
+policy to compact only makes sense on topics for which applications produce events that contain 
+both a key and a value.
+> Error you can get:- Cannot produce with an empty key in a compacted topic. Provide a non-empty key.
+
+
 
 
 
