@@ -1,20 +1,22 @@
 package udemy.kafka.producer;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Properties;
 
-public class ProducerDemo {
+
+public class Ex2ProducerWithCallBack {
 
     public static final Logger log =
-            LoggerFactory.getLogger(ProducerDemo.class.getSimpleName());
+            LoggerFactory.getLogger(Ex2ProducerWithCallBack.class.getSimpleName());
 
-    public static void main(String[] args) {
-        log.info("Producer started.....");
+    public static void main(String[] args) throws InterruptedException {
+        log.info("Producer started with callback.....");
 
         // create producer basic properties
         Properties properties = new Properties();
@@ -27,22 +29,32 @@ public class ProducerDemo {
         // create producer
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
-        // create producer record (topic with message that we want to send)
+        // producer record
         ProducerRecord<String, String> producerRecord= new ProducerRecord<>(
-          "demo_java", "Hello kafka, I am Java producer"
+                "demo_java", "Hello kafka, With CallBack"
         );
 
-        // send data (topic demo_java should exists,
-        // so first create the topic either using conductor ui or cli)
-        producer.send(producerRecord);
+        producer.send(producerRecord, new Callback() {
+            // it will receive a call of onCompletion
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                if(exception == null){
+                    log.info("\n Received metadata: \nTopic: {}\nPartition: {}\nOffset: {}\nTimestamp: {}\n", metadata.topic(), metadata.partition(), metadata.offset(), metadata.timestamp());
+                } else {
+                    log.error("Error in producing message", exception);
+                }
+            }
+        });
 
-        // flush: tell the producer to send all the data and block until done.
-        // it ensure that all the data that was in .send() to be produced
+        // flush: tell the producer to send all the data and block until done
         // -- synchronized operation
         producer.flush();
 
         // close: this will flush and then close the producer
         // used flush before just for understanding, we can only do close
         producer.close();
+
+        Thread.sleep(2000);
     }
+
 }

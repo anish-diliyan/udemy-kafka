@@ -318,6 +318,21 @@ policy to compact only makes sense on topics for which applications produce even
 both a key and a value.
 > Error you can get:- Cannot produce with an empty key in a compacted topic. Provide a non-empty key.
 
+<h2 align="center"> Producer Callbacks and Sticky Partitioner </h2>
+Surprisingly, even though the key is null, sometime we can see all the records going to the same 
+partition! This is not a bug, this is a performance improvement feature.
+Since Kafka v2.4.0, the partitioner is a Sticky Partitioner,
+which means the producer that receives messages sent in time close to each other(rapid) will try
+to fill a batch into ONE partition before switching to creating a batch for another partition.
+
+![App Screenshot](resources/partitioner.png)
+
+<h2 align="center"> Java Producer With Keys </h2>
+Keys become useful when a user wants to introduce ordering
+and ensure the messages that share the same key end up in the same partition.
+
+![App Screenshot](resources/duplicate_key.png)
+
 
 
 
